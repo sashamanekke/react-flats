@@ -1,44 +1,41 @@
 import React, { Component } from 'react';
+import GoogleMapReact from 'google-map-react';
 
 import FlatList from './flat-list';
-import GoogleMap from './googleMap';
+import Marker from './marker';
+import flats from '../data/flats';
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      //gifs: [],
-      //selectedGifId: "xT9IgDEI1iZyb2wqo8"
+      flats: flats,
+      selectedFlat: flats[0]
     };
   }
 
-  search = (query) => {
-    giphy({ apiKey: GIPHY_API_KEY, https: true })
-      .search ({
-        q: query,
-        rating: 'g',
-        limit: 10
-      }, (err, result) => {
-        this.setState({
-          gifs: result.data
-        });
-      });
+  center() {
+    return {
+      lat: this.state.selectedFlat.lat,
+      lng: this.state.selectedFlat.lng
+    };
   }
 
-  selectGif = (id) => {
-    this.setState({
-      selectedGifId: id
-    });
+  selectFlat = (index) => {
+    this.setState({ selectedFlat: flats[index] });
   }
 
   render() {
     return (
-      <div>
-        <div className="left-scene">
-          <FlatList/>
-        </div>
-        <div className="right-scene">
-          <GoogleMap/>
+      <div >
+        <FlatList
+          flats={this.state.flats}
+          selectedFlat={this.state.selectedFlat}
+          selectFlat={this.selectFlat}/>
+        <div className="map-container">
+          <GoogleMapReact defaultCenter={this.center()} defaultZoom={12}>
+            <Marker lat={this.state.selectedFlat.lat} lng={this.state.selectedFlat.lng}/>
+          </GoogleMapReact>
         </div>
       </div>
     );
